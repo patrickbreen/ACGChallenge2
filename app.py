@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-CODECOMMIT_REPO_NAME = "pipeline"
+CODECOMMIT_REPO_NAME = "ACGChallenge2"
 
 from aws_cdk import core
 
