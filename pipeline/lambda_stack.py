@@ -3,6 +3,8 @@ from aws_cdk import (
     aws_lambda as _lambda,
     aws_apigateway as _apigw,
     aws_dynamodb,
+    aws_events,
+    aws_events_targets,
 )
 
 class LambdaStack(core.Stack):
@@ -19,30 +21,43 @@ class LambdaStack(core.Stack):
                 type=aws_dynamodb.AttributeType.STRING
             )
         )
+        
+        # create a Cloudwatch Event rule
+        one_day_rule = aws_events.Rule(
+            self, "one_day_rule",
+            schedule=aws_events.Schedule.rate(core.Duration.days(1)),
+        )
 
 
         # Lambda stuff
         self.lambda_code_etl = _lambda.Code.from_cfn_parameters()
-        base_lambda = _lambda.Function(self,'LambdaETL',
+        lambda_etl = _lambda.Function(self,'LambdaETL',
             handler='lambda-handler-etl.handler',
             runtime=_lambda.Runtime.PYTHON_3_7,
             code=self.lambda_code_etl,
         )
+        
 
 
         self.lambda_code_serve = _lambda.Code.from_cfn_parameters()
-        base_lambda = _lambda.Function(self,'LambdaServe',
+        lambda_serve = _lambda.Function(self,'LambdaServe',
             handler='lambda-handler-serve.handler',
             runtime=_lambda.Runtime.PYTHON_3_7,
             code=self.lambda_code_serve,
         )
   
   
+          # Add target to Cloudwatch Event
+        one_day_rule.add_target(aws_events_targets.LambdaFunction(lambda_etl))
   
         # grant permission to lambda to write to demo table      
-        base_lambda.add_environment("TABLE_NAME", demo_table.table_name)
-        demo_table.grant_write_data(base_lambda)
-        demo_table.grant_read_data(base_lambda)
+        lambda_etl.add_environment("TABLE_NAME", demo_table.table_name)
+        demo_table.grant_write_data(lambda_etl)
+        demo_table.grant_read_data(lambda_etl)
+        
+        lambda_serve.add_environment("TABLE_NAME", demo_table.table_name)
+        demo_table.grant_write_data(lambda_serve)
+        demo_table.grant_read_data(lambda_serve)
 
 
 
@@ -50,8 +65,8 @@ class LambdaStack(core.Stack):
         base_api = _apigw.RestApi(self, 'ApiGatewayWithCors',
         rest_api_name='ApiGatewayWithCors')
 
-        example_entity = base_api.root.add_resource('example')
-        example_entity_lambda_integration = _apigw.LambdaIntegration(base_lambda,proxy=False, integration_responses=[
+        entity = base_api.root.add_resource('api')
+        entity_lambda_integration = _apigw.LambdaIntegration(lambda_serve,proxy=False, integration_responses=[
             {
                 'statusCode': '200',
                 'responseParameters': {
@@ -60,7 +75,7 @@ class LambdaStack(core.Stack):
             }
                 ]
             )
-        example_entity.add_method('GET', example_entity_lambda_integration, 
+        entity.add_method('GET', entity_lambda_integration, 
                 method_responses=[{
                     'statusCode': '200',
                     'responseParameters': {
@@ -70,7 +85,7 @@ class LambdaStack(core.Stack):
         ]
             )
 
-        self.add_cors_options(example_entity)
+        self.add_cors_options(entity)
 
 
     def add_cors_options(self, apigw_resource):
