@@ -57,15 +57,17 @@ class PipelineStack(core.Stack):
 
         lambda_location = lambda_build_output.s3_location
         
-        params = dict(
-            lambda_code_etl.assign(
+        params = lambda_code_etl.assign(
                 bucket_name=lambda_location.bucket_name,
                 object_key=lambda_location.object_key,
-                object_version=lambda_location.object_version).update(
+                object_version=lambda_location.object_version)
+                
+                
+        params.update(
             lambda_code_serve.assign(
                 bucket_name=lambda_location.bucket_name,
                 object_key=lambda_location.object_key,
-                object_version=lambda_location.object_version))
+                object_version=lambda_location.object_version)
         )
 
         codepipeline.Pipeline(self, "Pipeline",
