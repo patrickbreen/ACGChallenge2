@@ -23,7 +23,7 @@ class LambdaStack(core.Stack):
 
         # Lambda stuff
         self.lambda_code_etl = _lambda.Code.from_cfn_parameters()
-        base_lambda = _lambda.Function(self,'Lambda',
+        base_lambda = _lambda.Function(self,'LambdaETL',
             handler='lambda-handler-etl.handler',
             runtime=_lambda.Runtime.PYTHON_3_7,
             code=self.lambda_code_etl,
@@ -31,7 +31,7 @@ class LambdaStack(core.Stack):
 
 
         self.lambda_code_serve = _lambda.Code.from_cfn_parameters()
-        base_lambda = _lambda.Function(self,'Lambda',
+        base_lambda = _lambda.Function(self,'LambdaServe',
             handler='lambda-handler-serve.handler',
             runtime=_lambda.Runtime.PYTHON_3_7,
             code=self.lambda_code_serve,

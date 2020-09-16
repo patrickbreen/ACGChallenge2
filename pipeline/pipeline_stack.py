@@ -82,17 +82,13 @@ class PipelineStack(core.Stack):
                             action_name="Lambda_CFN_Deploy",
                             template_path=cdk_build_output.at_path(
                                 "LambdaStack.template.json"),
-                            stack_name="LambdaDeploymentStackACGChallenge2",
+                            stack_name="LambdaDeploymentStack",
                             admin_permissions=True,
                             parameter_overrides=dict(
                                 lambda_code_etl.assign(
                                     bucket_name=lambda_location.bucket_name,
                                     object_key=lambda_location.object_key,
-                                    object_version=lambda_location.object_version),
-                                lambda_code_serve.assign(
-                                    bucket_name=lambda_location.bucket_name,
-                                    object_key=lambda_location.object_key,
-                                    object_version=lambda_location.object_version),
+                                    object_version=lambda_location.object_version)
                             ),
                             extra_inputs=[lambda_build_output])])
                 ]
