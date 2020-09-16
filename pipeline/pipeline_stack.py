@@ -56,6 +56,17 @@ class PipelineStack(core.Stack):
         lambda_build_output = codepipeline.Artifact("LambdaBuildOutput")
 
         lambda_location = lambda_build_output.s3_location
+        
+        params = dict(
+            lambda_code_etl.assign(
+                bucket_name=lambda_location.bucket_name,
+                object_key=lambda_location.object_key,
+                object_version=lambda_location.object_version).update(
+            lambda_code_serve.assign(
+                bucket_name=lambda_location.bucket_name,
+                object_key=lambda_location.object_key,
+                object_version=lambda_location.object_version))
+        )
 
         codepipeline.Pipeline(self, "Pipeline",
             stages=[
@@ -85,16 +96,7 @@ class PipelineStack(core.Stack):
                                 "LambdaStack.template.json"),
                             stack_name="LambdaDeploymentStack",
                             admin_permissions=True,
-                            parameter_overrides=dict(
-                                lambda_code_etl.assign(
-                                    bucket_name=lambda_location.bucket_name,
-                                    object_key=lambda_location.object_key,
-                                    object_version=lambda_location.object_version).update(
-                                lambda_code_serve.assign(
-                                    bucket_name=lambda_location.bucket_name,
-                                    object_key=lambda_location.object_key,
-                                    object_version=lambda_location.object_version))
-                            ),
+                            parameter_overrides=params,
                             extra_inputs=[lambda_build_output])])
                 ]
             )
