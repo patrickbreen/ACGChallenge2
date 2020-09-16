@@ -36,9 +36,3 @@ def serve(event, context):
         'statusCode': 200,
         'body': {'key': 'hello'},
     }
-    
-def etl(event, context):
-    return {
-        'statusCode': 200,
-        'body': {'key': 'hello'},
-    }

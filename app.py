@@ -12,7 +12,8 @@ app = core.App()
 lambda_stack = LambdaStack(app, "LambdaStack")
 
 PipelineStack(app, "PipelineDeployingLambdaStack",
-    lambda_code=lambda_stack.lambda_code,
+    lambda_code_etl=lambda_stack.lambda_code_etl,
+    lambda_code_serve=lambda_stack.lambda_code_serve,
     repo_name=CODECOMMIT_REPO_NAME)
 
 app.synth()

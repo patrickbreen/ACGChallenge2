@@ -6,8 +6,11 @@ from aws_cdk import (core, aws_codebuild as codebuild,
 
 class PipelineStack(core.Stack):
 
-    def __init__(self, scope: core.Construct, id: str, *, repo_name: str=None,
-                 lambda_code: lambda_.CfnParametersCode=None, **kwargs) -> None:
+    def __init__(self, scope: core.Construct, id: str, *,
+                repo_name: str=None,
+                lambda_code_etl: lambda_.CfnParametersCode=None,
+                lambda_code_serve: lambda_.CfnParametersCode=None,
+                **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
         code = codecommit.Repository.from_repository_name(self, "ImportedRepo",
@@ -79,13 +82,18 @@ class PipelineStack(core.Stack):
                             action_name="Lambda_CFN_Deploy",
                             template_path=cdk_build_output.at_path(
                                 "LambdaStack.template.json"),
-                            stack_name="LambdaDeploymentStackACGChallenge2",
+                            stack_name="LambdaDeploymentStack",
                             admin_permissions=True,
                             parameter_overrides=dict(
-                                lambda_code.assign(
+                                lambda_code_etl.assign(
                                     bucket_name=lambda_location.bucket_name,
                                     object_key=lambda_location.object_key,
-                                    object_version=lambda_location.object_version)),
+                                    object_version=lambda_location.object_version),
+                                lambda_code_serve.assign(
+                                    bucket_name=lambda_location.bucket_name,
+                                    object_key=lambda_location.object_key,
+                                    object_version=lambda_location.object_version),
+                            ),
                             extra_inputs=[lambda_build_output])])
                 ]
             )

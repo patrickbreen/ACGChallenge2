@@ -21,41 +21,37 @@ class LambdaStack(core.Stack):
         )
 
 
-        # Lambda to do ETL
-        self.lambda_code = _lambda.Code.from_cfn_parameters()
-        etl_lambda = _lambda.Function(self,'ETL_Lambda',
-        handler='lambda-handler.etl',
-        runtime=_lambda.Runtime.PYTHON_3_7,
-        code=self.lambda_code,
+        # Lambda stuff
+        self.lambda_code_etl = _lambda.Code.from_cfn_parameters()
+        base_lambda = _lambda.Function(self,'Lambda',
+            handler='lambda-handler-etl.handler',
+            runtime=_lambda.Runtime.PYTHON_3_7,
+            code=self.lambda_code_etl,
         )
-        
-        
-        # grant permission to lambda to read/write to demo table      
-        etl_lambda.add_environment("TABLE_NAME", demo_table.table_name)
-        demo_table.grant_write_data(etl_lambda)
-        demo_table.grant_read_data(etl_lambda)
-        
-        
-        # Lambda to serve from API Gateway
-        self.lambda_code = _lambda.Code.from_cfn_parameters()
-        serve_lambda = _lambda.Function(self,'Serve_Lambda',
-        handler='lambda-handler.serve',
-        runtime=_lambda.Runtime.PYTHON_3_7,
-        code=self.lambda_code,
+
+
+        self.lambda_code_serve = _lambda.Code.from_cfn_parameters()
+        base_lambda = _lambda.Function(self,'Lambda',
+            handler='lambda-handler-serve.handler',
+            runtime=_lambda.Runtime.PYTHON_3_7,
+            code=self.lambda_code_serve,
         )
-        
-        # grant permission to lambda to read/write to demo table      
-        serve_lambda.add_environment("TABLE_NAME", demo_table.table_name)
-        demo_table.grant_write_data(serve_lambda)
-        demo_table.grant_read_data(serve_lambda)
   
+  
+  
+        # grant permission to lambda to write to demo table      
+        base_lambda.add_environment("TABLE_NAME", demo_table.table_name)
+        demo_table.grant_write_data(base_lambda)
+        demo_table.grant_read_data(base_lambda)
+
+
 
         # API Gateway stuff        
         base_api = _apigw.RestApi(self, 'ApiGatewayWithCors',
         rest_api_name='ApiGatewayWithCors')
 
         example_entity = base_api.root.add_resource('example')
-        example_entity_lambda_integration = _apigw.LambdaIntegration(serve_lambda,proxy=False, integration_responses=[
+        example_entity_lambda_integration = _apigw.LambdaIntegration(base_lambda,proxy=False, integration_responses=[
             {
                 'statusCode': '200',
                 'responseParameters': {
