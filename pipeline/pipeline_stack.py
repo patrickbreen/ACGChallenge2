@@ -88,6 +88,10 @@ class PipelineStack(core.Stack):
                                 lambda_code_etl.assign(
                                     bucket_name=lambda_location.bucket_name,
                                     object_key=lambda_location.object_key,
+                                    object_version=lambda_location.object_version) + \
+                                lambda_code_serve.assign(
+                                    bucket_name=lambda_location.bucket_name,
+                                    object_key=lambda_location.object_key,
                                     object_version=lambda_location.object_version)
                             ),
                             extra_inputs=[lambda_build_output])])
