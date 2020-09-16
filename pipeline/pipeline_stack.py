@@ -46,7 +46,8 @@ class PipelineStack(core.Stack):
                             artifacts={
                                 "base-directory": "lambda",
                                 "files": [
-                                    "lambda-handler.py"]},
+                                    "lambda-handler-etl.py",
+                                    "lambda-handler-serve.py"]},
                             environment=dict(buildImage=
                                 codebuild.LinuxBuildImage.STANDARD_2_0))))
 
