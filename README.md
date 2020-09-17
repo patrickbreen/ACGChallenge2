@@ -16,6 +16,10 @@
 ### TODO
 
 - make data ETL lambda and test it
+    - todo load data into dynamodb
+    - todo send successes and failures to SNS
+    - refactor etl code into python module
+    - unit tests for success and failure of etl process
 - make API Gateway with lambda backend to read dynamodb data
 - make charts.js webpage and host in s3/cloudfront
 - make blog post
