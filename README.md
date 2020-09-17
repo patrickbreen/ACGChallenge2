@@ -9,7 +9,7 @@
 ### Note
 
 - Ya, I do build the lambda stacks AND the pipeline on every commit, but only the lambda stacks are deployed.
-- Basically the pipeline *ITSELF* is CI, and all the other infrastructure is full CI/CD
+- Basically the pipeline *ITSELF* is CI only, and all the other infrastructure is CI/CD
 - CDK gurus will understand what I mean, I think...
 
 

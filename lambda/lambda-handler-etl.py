@@ -1,3 +1,5 @@
+import csv
+from urllib import request
 # import os
 # import decimal
 
@@ -32,8 +34,18 @@
 #     }
 
     
-def etl(event, context):
+def handler(event, context):
+    nytimes_dataset = 'https://raw.githubusercontent.com/nytimes/covid-19-data/master/us.csv'
+    hopkins_dataset = 'https://raw.githubusercontent.com/datasets/covid-19/master/data/time-series-19-covid-combined.csv'
+    
+    ftpstream = request.urlopen(url)
+    data = ftpstream.read().decode('utf-8')
+    
+    for row in data.split('\n'):
+        print(row)
+
+    
     return {
         'statusCode': 200,
-        'body': {'key': 'hello'},
+        'body': {'key': row},
     }
