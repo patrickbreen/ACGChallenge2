@@ -16,7 +16,7 @@ class PipelineStack(core.Stack):
         code = codecommit.Repository.from_repository_name(self, "ImportedRepo",
                   repo_name)
 
-        cdk_build = codebuild.PipelineProject(self, "CdkBuild",
+        build_pipeline = codebuild.PipelineProject(self, "BuildPipeline",
                         build_spec=codebuild.BuildSpec.from_object(dict(
                             version="0.2",
                             phases=dict(
@@ -35,7 +35,7 @@ class PipelineStack(core.Stack):
                             environment=dict(buildImage=
                                 codebuild.LinuxBuildImage.STANDARD_2_0))))
 
-        lambda_build = codebuild.PipelineProject(self, 'LambdaBuild',
+        build_infra = codebuild.PipelineProject(self, 'BuildInfra',
                         build_spec=codebuild.BuildSpec.from_object(dict(
                             version="0.2",
                             phases=dict(
@@ -52,22 +52,22 @@ class PipelineStack(core.Stack):
                                 codebuild.LinuxBuildImage.STANDARD_2_0))))
 
         source_output = codepipeline.Artifact()
-        cdk_build_output = codepipeline.Artifact("CdkBuildOutput")
-        lambda_build_output = codepipeline.Artifact("LambdaBuildOutput")
+        build_pipeline_output = codepipeline.Artifact("BuildPipelineOutput")
+        build_infra_output = codepipeline.Artifact("BuildInfraOutput")
 
-        lambda_location = lambda_build_output.s3_location
+        infra_location = build_infra_output.s3_location
         
         params = lambda_code_etl.assign(
-                bucket_name=lambda_location.bucket_name,
-                object_key=lambda_location.object_key,
-                object_version=lambda_location.object_version)
+                bucket_name=infra_location.bucket_name,
+                object_key=infra_location.object_key,
+                object_version=infra_location.object_version)
                 
                 
         params.update(
             lambda_code_serve.assign(
-                bucket_name=lambda_location.bucket_name,
-                object_key=lambda_location.object_key,
-                object_version=lambda_location.object_version)
+                bucket_name=infra_location.bucket_name,
+                object_key=infra_location.object_key,
+                object_version=infra_location.object_version)
         )
 
         codepipeline.Pipeline(self, "Pipeline",
@@ -82,23 +82,23 @@ class PipelineStack(core.Stack):
                     actions=[
                         codepipeline_actions.CodeBuildAction(
                             action_name="Lambda_Build",
-                            project=lambda_build,
+                            project=build_infra,
                             input=source_output,
-                            outputs=[lambda_build_output]),
+                            outputs=[build_infra_output]),
                         codepipeline_actions.CodeBuildAction(
                             action_name="CDK_Build",
-                            project=cdk_build,
+                            project=build_pipeline,
                             input=source_output,
-                            outputs=[cdk_build_output])]),
+                            outputs=[build_pipeline_output])]),
                 codepipeline.StageProps(stage_name="Deploy",
                     actions=[
                         codepipeline_actions.CloudFormationCreateUpdateStackAction(
                             action_name="Lambda_CFN_Deploy",
-                            template_path=cdk_build_output.at_path(
+                            template_path=build_pipeline_output.at_path(
                                 "LambdaStack.template.json"),
                             stack_name="LambdaDeploymentStack",
                             admin_permissions=True,
                             parameter_overrides=params,
-                            extra_inputs=[lambda_build_output])])
+                            extra_inputs=[build_infra_output])])
                 ]
             )
