@@ -33,7 +33,7 @@ class LambdaStack(core.Stack):
         self.lambda_code_etl = _lambda.Code.from_cfn_parameters()
         lambda_etl = _lambda.Function(self,'LambdaETL',
             handler='lambda-handler-etl.handler',
-            timeout=core.Duration.seconds(3),
+            timeout=core.Duration.seconds(30),
             runtime=_lambda.Runtime.PYTHON_3_7,
             code=self.lambda_code_etl,
         )
