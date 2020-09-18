@@ -31,7 +31,7 @@
 #         'body': {'visitor_count': item['Attributes']['visitor_count']},
 #     }
 
-def serve(event, context):
+def handler(event, context):
     return {
         'statusCode': 200,
         'body': {'key': 'hello'},

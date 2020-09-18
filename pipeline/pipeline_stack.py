@@ -41,11 +41,13 @@ class PipelineStack(core.Stack):
                             phases=dict(
                                 install=dict(
                                     commands=[
-                                        "python -m pip install -r requirements.txt"]),
+                                        "python -m pip install -r requirements.txt",
+                                        "python -m unittest discover -s . -p '*_test.py'"]),
                                 ),
                             artifacts={
                                 "base-directory": "lambda",
                                 "files": [
+                                    "etl_module.py"
                                     "lambda-handler-etl.py",
                                     "lambda-handler-serve.py"]},
                             environment=dict(buildImage=
