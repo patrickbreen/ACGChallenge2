@@ -101,7 +101,7 @@ def load(dataset):
         try:
             date_, cases, deaths, recovered = row
             table.put_item(Item={
-                'date_': date_,
+                'id': date_,
                 'cases': int(cases),
                 'deaths': int(deaths),
                 'recovered': int(recovered),
@@ -115,16 +115,16 @@ def load(dataset):
     
 def handler(event, context):
     
-    nytimes_dataset, exceptions = extract_nyt('https://raw.githubusercontent.com/nytimes/covid-19-data/master/us.csv')
-    hopkins_dataset, exceptions = extract_jh('https://raw.githubusercontent.com/datasets/covid-19/master/data/time-series-19-covid-combined.csv')
+    nytimes_dataset, exceptions_nyt = extract_nyt('https://raw.githubusercontent.com/nytimes/covid-19-data/master/us.csv')
+    hopkins_dataset, exceptions_jh = extract_jh('https://raw.githubusercontent.com/datasets/covid-19/master/data/time-series-19-covid-combined.csv')
     combined_dataset = merge(nytimes_dataset, hopkins_dataset)
     
-    number_rows_updated, exceptions = load(combined_dataset)
+    number_rows_updated, exceptions_load = load(combined_dataset)
     
     # TODO send/failure success to SNS
     return {
         'statusCode': 200,
-        'body': {'number_rows_updated': number_rows_updated},
+        'body': {'number_rows_updated': number_rows_updated, 'errors': len(exceptions_load)},
         # 'body': {'combined_dataset': combined_dataset},
     }
     
