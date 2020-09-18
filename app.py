@@ -5,15 +5,15 @@ CODECOMMIT_REPO_NAME = "ACGChallenge2"
 from aws_cdk import core
 
 from pipeline.pipeline_stack import PipelineStack
-from pipeline.lambda_stack import LambdaStack
+from pipeline.infra_stack import InfraStack
 
 app = core.App()
 
-lambda_stack = LambdaStack(app, "LambdaStack")
+infra_stack = InfraStack(app, "InfraStack")
 
-PipelineStack(app, "PipelineDeployingLambdaStack",
-    lambda_code_etl=lambda_stack.lambda_code_etl,
-    lambda_code_serve=lambda_stack.lambda_code_serve,
+PipelineStack(app, "PipelineDeployingInfraStack",
+    lambda_code_etl=infra_stack.lambda_code_etl,
+    lambda_code_serve=infra_stack.lambda_code_serve,
     repo_name=CODECOMMIT_REPO_NAME)
 
 app.synth()

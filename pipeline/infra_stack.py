@@ -7,7 +7,7 @@ from aws_cdk import (
     aws_events_targets,
 )
 
-class LambdaStack(core.Stack):
+class InfraStack(core.Stack):
 
     def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)

@@ -3,9 +3,9 @@
 
 ### Deploy
 
- - deploy (or update) pipeline - `cdk deploy PipelineDeployingLambdaStack`
- - destroy pipeline - `cdk destroy PipelineDeployingLambdaStack`
- - destroy other stack - `cdk destroy LambdaStack`
+ - deploy (or update) pipeline - `cdk deploy PipelineDeployingInfraStack`
+ - destroy pipeline - `cdk destroy PipelineDeployingInfraStack`
+ - destroy other stack - `cdk destroy InfraStack`
  
 ### Note
 

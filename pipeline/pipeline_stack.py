@@ -31,7 +31,7 @@ class PipelineStack(core.Stack):
                             artifacts={
                                 "base-directory": "dist",
                                 "files": [
-                                    "LambdaStack.template.json"]},
+                                    "InfraStack.template.json"]},
                             environment=dict(buildImage=
                                 codebuild.LinuxBuildImage.STANDARD_2_0))))
 
@@ -93,10 +93,10 @@ class PipelineStack(core.Stack):
                 codepipeline.StageProps(stage_name="Deploy",
                     actions=[
                         codepipeline_actions.CloudFormationCreateUpdateStackAction(
-                            action_name="Lambda_CFN_Deploy",
+                            action_name="Infra_CFN_Deploy",
                             template_path=build_pipeline_output.at_path(
-                                "LambdaStack.template.json"),
-                            stack_name="LambdaDeploymentStack",
+                                "InfraStack.template.json"),
+                            stack_name="InfraDeploymentStack",
                             admin_permissions=True,
                             parameter_overrides=params,
                             extra_inputs=[build_infra_output])])
