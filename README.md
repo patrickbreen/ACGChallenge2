@@ -5,6 +5,7 @@
 
  - deploy (or update) pipeline - `cdk deploy PipelineDeployingLambdaStack`
  - destroy pipeline - `cdk destroy PipelineDeployingLambdaStack`
+ - destroy other stack - `cdk destroy LambdaStack`
  
 ### Note
 
@@ -22,4 +23,5 @@
     - unit tests for success and failure of etl process
 - make API Gateway with lambda backend to read dynamodb data
 - make charts.js webpage and host in s3/cloudfront
+- migrate repo to github and integrate github as a source for CI/CD
 - make blog post

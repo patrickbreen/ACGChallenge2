@@ -1,20 +1,19 @@
 import csv
 import datetime
 from urllib import request
-# import os
-# import decimal
+import os
 
-# import boto3
+import boto3
 
 
-# # Get the service resource.
-# dynamodb = boto3.resource('dynamodb')
+# Get the service resource.
+dynamodb = boto3.resource('dynamodb')
 
-# # set environment variable
-# TABLE_NAME = os.environ['TABLE_NAME']
-# table = dynamodb.Table(TABLE_NAME)
+# set environment variable
+TABLE_NAME = os.environ['TABLE_NAME']
+table = dynamodb.Table(TABLE_NAME)
 
-# # init counter if not already exists
+# init counter if not already exists
 # try:
 #     table.put_item(Item={'id': 'counter','visitor_count': 0}, ConditionExpression='attribute_not_exists(id)')
 # except:
@@ -85,7 +84,23 @@ def merge(nyt_dataset, jh_dataset):
 # TODO load data into dynamodb and send sns notification
 def load(dataset):
     # The message should include the number of rows updated in the database
-    return 0
+    
+    number_rows_updated = 0
+    
+    for row in dataset:
+        date_, cases, deaths, recovered = row
+        try:
+            table.put_item(Item={
+                'date_': date_,
+                'cases': int(cases),
+                'deaths': int(deaths),
+                'recovered': int(recovered),
+                
+            }, ConditionExpression='attribute_not_exists(date_)')
+            number_rows_updated += 1
+        except:
+            pass
+    return number_rows_updated
 
     
 def handler(event, context):
@@ -102,7 +117,8 @@ def handler(event, context):
         
         return {
             'statusCode': 200,
-            'body': {'key': combined_dataset},
+            'body': {'number_rows_updated': number_rows_updated},
+            # 'body': {'combined_dataset': combined_dataset},
         }
     
     except Exception as e:
