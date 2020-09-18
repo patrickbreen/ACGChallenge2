@@ -110,19 +110,18 @@ def load(dataset):
             number_rows_updated += 1
         except Exception as e:
             exceptions.append((row, str(e)))
-    return number_rows_updated
+    return number_rows_updated, exceptions
 
     
 def handler(event, context):
     
     nytimes_dataset, exceptions = extract_nyt('https://raw.githubusercontent.com/nytimes/covid-19-data/master/us.csv')
     hopkins_dataset, exceptions = extract_jh('https://raw.githubusercontent.com/datasets/covid-19/master/data/time-series-19-covid-combined.csv')
-    combined_dataset, exceptions = merge(nytimes_dataset, hopkins_dataset)
+    combined_dataset = merge(nytimes_dataset, hopkins_dataset)
     
     number_rows_updated, exceptions = load(combined_dataset)
     
     # TODO send/failure success to SNS
-    
     return {
         'statusCode': 200,
         'body': {'number_rows_updated': number_rows_updated},
