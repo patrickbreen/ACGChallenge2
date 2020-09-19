@@ -42,12 +42,12 @@ class PipelineStack(core.Stack):
                                 install=dict(
                                     commands=[
                                         "python -m pip install -r requirements.txt",
-                                        "python -m unittest discover -s . -p '*_test.py'"]),
+                                        "python lambda/test_etl.py"]),
                                 ),
                             artifacts={
                                 "base-directory": "lambda",
                                 "files": [
-                                    "etl_module.py"
+                                    "etl_module.py",
                                     "lambda-handler-etl.py",
                                     "lambda-handler-serve.py"]},
                             environment=dict(buildImage=
