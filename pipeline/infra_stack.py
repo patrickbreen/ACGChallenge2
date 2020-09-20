@@ -6,6 +6,7 @@ from aws_cdk import (
     aws_events,
     aws_events_targets,
     aws_sns,
+    aws_sns_subscriptions,
 )
 
 
@@ -91,9 +92,14 @@ class InfraStack(core.Stack):
         self.add_cors_options(entity)
 
         
-        # make the SNS resource (called a topic)
-        sns_topic = aws_sns.Topic(self, "PipelineTopic")
-        lambda_etl.add_environment("SNS_TOPIC_ARN", sns_topic.topic_arn)
+        # make the SNS resource (called a topic) and give access to the ETL lambda
+        sns_topic = aws_sns.Topic(self, 'PipelineTopic')
+        lambda_etl.add_environment('SNS_TOPIC_ARN', sns_topic.topic_arn)
+        sns_topic.grant_publish(lambda_etl)
+        
+        # make an email subscription
+        subscription = aws_sns_subscriptions.EmailSubscription('breen.patrick.1010@gmail.com')
+        sns_topic.add_subscription(subscription)
 
 
     def add_cors_options(self, apigw_resource):

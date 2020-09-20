@@ -1,11 +1,24 @@
 
 # Welcome to your CDK Python project!
 
+### Build the Infrastructure locally in development
+
+ - build the pipeline `cdk synthesize InfraStack`
+ - build the other infrastructure `cdk synthesize PipelineDeployingInfraStack`
+
 ### Deploy
 
  - deploy (or update) pipeline - `cdk deploy PipelineDeployingInfraStack`
  - destroy pipeline - `cdk destroy PipelineDeployingInfraStack`
  - destroy other stack - `cdk destroy InfraStack`
+
+
+### Access the covid 'data dashboard'
+
+TODO
+
+
+
  
 ### Note
 

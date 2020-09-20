@@ -9,6 +9,8 @@ from pipeline.infra_stack import InfraStack
 
 app = core.App()
 
+
+# these stacks will be made in the default account and region
 infra_stack = InfraStack(app, "InfraStack")
 
 PipelineStack(app, "PipelineDeployingInfraStack",
