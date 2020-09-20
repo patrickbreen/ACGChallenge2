@@ -1,5 +1,6 @@
 
-# Welcome to your CDK Python project!
+# First Blog article - Covid data pipeline
+
 
 ### Build the Infrastructure locally in development
 
@@ -13,9 +14,10 @@
  - destroy other stack - `cdk destroy InfraStack`
 
 
-### Access the covid 'data dashboard'
+### Access the results of the data pipeline:
 
-TODO
+- Get the raw data output (the actual URL may be different) - `https://wwy7pf7ga7.execute-api.us-east-1.amazonaws.com/prod/api`
+- Access the data dashboard - `TODO`
 
 
 
@@ -29,7 +31,5 @@ TODO
 
 ### TODO
 
-- make API Gateway with lambda backend to read dynamodb data
-- make charts.js webpage and host in s3/cloudfront
 - migrate repo to github and integrate github as a source for CI/CD
 - make blog post

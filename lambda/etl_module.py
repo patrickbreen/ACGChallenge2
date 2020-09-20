@@ -60,7 +60,7 @@ def merge(nyt_dataset, jh_dataset):
     return combined_dataset
 
 # load data into dynamodb and send sns notification
-def load(dataset):
+def load(dataset, table):
     # The message should include the number of rows updated in the database
     
     number_rows_updated = 0

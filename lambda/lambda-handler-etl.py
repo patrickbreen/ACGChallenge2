@@ -28,7 +28,7 @@ def handler(event, context):
     combined_dataset = merge(nytimes_dataset, hopkins_dataset)
     
     # Load the dataset into AWS Dynamo Database:
-    number_rows_updated, exceptions_load = load(combined_dataset)
+    number_rows_updated, exceptions_load = load(combined_dataset, table)
     
     message = {
         'number_rows_updated': number_rows_updated,
