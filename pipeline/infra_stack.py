@@ -104,15 +104,18 @@ class InfraStack(core.Stack):
         sns_topic.add_subscription(subscription)
         
         # make an S3 bucket to use to host static files
-        myBucket = aws_s3.Bucket(self, "my-covid-dashboard-blog-bucket-id",
+        myBucket = aws_s3.Bucket(self, id + "_s3-bucket",
+           bucket_name= ('cdk-s3-static-website-dfghdfgddcv'),
            public_read_access=True,
            removal_policy=core.RemovalPolicy.DESTROY,        
-           website_index_document="dashboard.html"
+           website_index_document="dashboard.html",
+           website_error_document= 'error.html',
         );
+    
         
         deployment = aws_s3_deployment.BucketDeployment(self, "deployStaticWebsite", 
-           sources=[aws_s3_deployment.Source.asset('./website')],
-           destination_bucket=myBucket
+          sources=[aws_s3_deployment.Source.asset('./website')],
+          destination_bucket=myBucket
         );
 
 

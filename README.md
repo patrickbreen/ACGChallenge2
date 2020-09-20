@@ -9,6 +9,8 @@
 
 ### Deploy
 
+- bootstrap the toolset in the region - `cdk bootstrap aws://449614586814/us-east-1`
+
  - deploy (or update) pipeline - `cdk deploy PipelineDeployingInfraStack`
  - destroy pipeline - `cdk destroy PipelineDeployingInfraStack`
  - destroy other stack - `cdk destroy InfraStack`
