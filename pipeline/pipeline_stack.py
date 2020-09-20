@@ -52,6 +52,21 @@ class PipelineStack(core.Stack):
                                     "lambda-handler-serve.py"]},
                             environment=dict(buildImage=
                                 codebuild.LinuxBuildImage.STANDARD_2_0))))
+                                
+        package_website = codebuild.PipelineProject(self, 'BuildInfra',
+                build_spec=codebuild.BuildSpec.from_object(dict(
+                    version="0.2",
+                    phases=dict(
+                        install=dict(
+                            commands=[
+                                ""]),
+                        ),
+                    artifacts={
+                        "base-directory": ".",
+                        "files": [
+                            "website/*"]},
+                    environment=dict(buildImage=
+                        codebuild.LinuxBuildImage.STANDARD_2_0))))
 
         source_output = codepipeline.Artifact()
         build_pipeline_output = codepipeline.Artifact("BuildPipelineOutput")
@@ -71,6 +86,15 @@ class PipelineStack(core.Stack):
                 object_key=infra_location.object_key,
                 object_version=infra_location.object_version)
         )
+        
+        # make an S3 bucket to use to host static files
+        website_bucket = s3.Bucket(self, id + "_s3-bucket",
+           bucket_name= ('cdk-s3-static-website-blog-pb-2'),
+           public_read_access=True,
+           removal_policy=core.RemovalPolicy.DESTROY,        
+           website_index_document="dashboard.html",
+           website_error_document= 'error.html',
+        );
 
         codepipeline.Pipeline(self, "Pipeline",
             stages=[
@@ -101,6 +125,11 @@ class PipelineStack(core.Stack):
                             stack_name="InfraDeploymentStack",
                             admin_permissions=True,
                             parameter_overrides=params,
-                            extra_inputs=[build_infra_output])])
+                            extra_inputs=[build_infra_output]),
+                        codepipeline_actions.S3DeployAction(
+                                actionName='S3_Deploy',
+                                bucket=website_bucket,
+                                input=source_output,
+                            )])
                 ]
             )

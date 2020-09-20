@@ -100,23 +100,10 @@ class InfraStack(core.Stack):
         sns_topic.grant_publish(lambda_etl)
         
         # make an email subscription
-        subscription = aws_sns_subscriptions.EmailSubscription('breen.patrick.1010@gmail.com')
+        subscription = aws_sns_subscriptions.EmailSubscription('my@email.com') # fake email because I don't want AWS spam
         sns_topic.add_subscription(subscription)
         
-        # make an S3 bucket to use to host static files
-        myBucket = aws_s3.Bucket(self, id + "_s3-bucket",
-           bucket_name= ('cdk-s3-static-website-dfghdfgddcv'),
-           public_read_access=True,
-           removal_policy=core.RemovalPolicy.DESTROY,        
-           website_index_document="dashboard.html",
-           website_error_document= 'error.html',
-        );
-    
-        
-        deployment = aws_s3_deployment.BucketDeployment(self, "deployStaticWebsite", 
-          sources=[aws_s3_deployment.Source.asset('./website')],
-          destination_bucket=myBucket
-        );
+
 
 
     def add_cors_options(self, apigw_resource):
