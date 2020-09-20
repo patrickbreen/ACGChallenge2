@@ -53,7 +53,7 @@ class PipelineStack(core.Stack):
                             environment=dict(buildImage=
                                 codebuild.LinuxBuildImage.STANDARD_2_0))))
                                 
-        package_website = codebuild.PipelineProject(self, 'BuildInfra',
+        package_website = codebuild.PipelineProject(self, 'PackageWebsite',
                 build_spec=codebuild.BuildSpec.from_object(dict(
                     version="0.2",
                     phases=dict(
@@ -127,7 +127,7 @@ class PipelineStack(core.Stack):
                             parameter_overrides=params,
                             extra_inputs=[build_infra_output]),
                         codepipeline_actions.S3DeployAction(
-                                actionName='S3_Deploy',
+                                action_name='S3_Deploy',
                                 bucket=website_bucket,
                                 input=source_output,
                             )])

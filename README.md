@@ -1,6 +1,8 @@
 
 # First Blog article - Covid data pipeline
 
+I've copied this repository to Github for reference, but it is primarily hosted, and integrated with AWS codedeploy
+
 
 ### Build the Infrastructure locally in development
 
