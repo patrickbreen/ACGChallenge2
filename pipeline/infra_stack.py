@@ -5,7 +5,10 @@ from aws_cdk import (
     aws_dynamodb,
     aws_events,
     aws_events_targets,
+    aws_sns,
 )
+
+from cdk_watchful import Watchful
 
 class InfraStack(core.Stack):
 
@@ -87,6 +90,18 @@ class InfraStack(core.Stack):
             )
 
         self.add_cors_options(entity)
+        
+        
+        # define a Watchful monitoring system and watch the entire scope
+        # this will automatically find all watchable resources and add
+        # them to our dashboard
+        # I'm not going to put a real email here at this time
+        wf = Watchful(self, 'watchful', alarm_email='myemail@email.com')
+        wf.watch_scope(self)
+        
+        # make the SNS resource (called a topic)
+        sns_topic = aws_sns.Topic(self, "PipelineTopic")
+        lambda_etl.add_environment("SNS_TOPIC_ARN", sns_topic.topic_arn)
 
 
     def add_cors_options(self, apigw_resource):
