@@ -60,4 +60,4 @@ typing-extensions
 zipp
 boto3
 aws-cdk.aws-dynamodb
-aws_s3_deployment
+aws-cdk.aws_s3_deployment
