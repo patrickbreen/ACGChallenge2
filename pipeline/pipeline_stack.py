@@ -53,7 +53,7 @@ class PipelineStack(core.Stack):
                             environment=dict(buildImage=
                                 codebuild.LinuxBuildImage.STANDARD_2_0))))
                                 
-        package_website = codebuild.PipelineProject(self, 'PackageWebsite',
+        build_website = codebuild.PipelineProject(self, 'PackageWebsite',
                 build_spec=codebuild.BuildSpec.from_object(dict(
                     version="0.2",
                     phases=dict(
@@ -71,6 +71,7 @@ class PipelineStack(core.Stack):
         source_output = codepipeline.Artifact()
         build_pipeline_output = codepipeline.Artifact("BuildPipelineOutput")
         build_infra_output = codepipeline.Artifact("BuildInfraOutput")
+        build_website_output = codepipeline.Artifact("BuildWebsiteOutput")
 
         infra_location = build_infra_output.s3_location
         
@@ -94,6 +95,7 @@ class PipelineStack(core.Stack):
            removal_policy=core.RemovalPolicy.DESTROY,        
            website_index_document="dashboard.html",
            website_error_document= 'error.html',
+           cors=[s3.CorsRule(allowed_methods=[s3.HttpMethods.GET], allowed_origins=['*'])]
         );
 
         codepipeline.Pipeline(self, "Pipeline",
@@ -115,7 +117,12 @@ class PipelineStack(core.Stack):
                             action_name="CDK_Build",
                             project=build_pipeline,
                             input=source_output,
-                            outputs=[build_pipeline_output])]),
+                            outputs=[build_pipeline_output]),
+                        codepipeline_actions.CodeBuildAction(
+                            action_name="Website_Build",
+                            project=build_website,
+                            input=source_output,
+                            outputs=[build_website_output])]),
                 codepipeline.StageProps(stage_name="Deploy",
                     actions=[
                         codepipeline_actions.CloudFormationCreateUpdateStackAction(
@@ -129,7 +136,7 @@ class PipelineStack(core.Stack):
                         codepipeline_actions.S3DeployAction(
                                 action_name='S3_Deploy',
                                 bucket=website_bucket,
-                                input=source_output,
-                            )])
+                                input=build_website_output,
+                    )])
                 ]
             )
