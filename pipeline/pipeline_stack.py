@@ -62,9 +62,9 @@ class PipelineStack(core.Stack):
                                 ""]),
                         ),
                     artifacts={
-                        "base-directory": ".",
+                        "base-directory": "website",
                         "files": [
-                            "website/*"]},
+                            "*"]},
                     environment=dict(buildImage=
                         codebuild.LinuxBuildImage.STANDARD_2_0))))
 
