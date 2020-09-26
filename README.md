@@ -33,8 +33,3 @@ I've copied this repository to Github for reference, but it is primarily hosted,
 - CDK gurus will understand what I mean, I think...
 - Based on my small amount of professional experience, I think that the best practice would be to seperate these things, but this is a toy example anyways.
 
-
-### TODO
-
-- migrate repo to github and integrate github as a source for CI/CD
-- make blog post
