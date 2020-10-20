@@ -6,8 +6,8 @@ I've copied this repository to Github for reference, but it is primarily hosted,
 
 ### Build the Infrastructure locally in development
 
- - build the pipeline `cdk synthesize InfraStack`
- - build the other infrastructure `cdk synthesize PipelineDeployingInfraStack`
+ - build the pipeline `cdk synthesize PipelineDeployingInfraStackInfraStack`
+ - build the other infrastructure `cdk synthesize InfraStack`
 
 ### Deploy
 
