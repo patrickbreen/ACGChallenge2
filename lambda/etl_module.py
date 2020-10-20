@@ -15,7 +15,7 @@ def extract_nyt(data):
     for row in data.split('\n')[1:]:
         try:
             fields = row.split(',')
-            date = date_time_obj = datetime.datetime.strptime(fields[0], '%Y-%m-%d')
+            date = datetime.datetime.strptime(fields[0], '%Y-%m-%d')
             
             cases[date] = fields[1:]
         
@@ -35,7 +35,7 @@ def extract_jh(data):
         try:
             if ',US,' in row:
                 fields = row.split(',')
-                date_ = date_time_obj = datetime.datetime.strptime(fields[0], '%Y-%m-%d')
+                date_ = datetime.datetime.strptime(fields[0], '%Y-%m-%d')
                 recovered_val = fields[-2]
                 
                 recovered[date_] = recovered_val
